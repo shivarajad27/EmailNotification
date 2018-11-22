@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using EmailNotification.Models;
+using System.Web.Helpers;
 using System.Web.Mvc;
 
 namespace EmailNotification.Controllers
@@ -13,18 +11,19 @@ namespace EmailNotification.Controllers
             return View();
         }
 
-        public ActionResult About()
+        public ActionResult SendEmail(RegisterModel model)
         {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
+            if (ModelState.IsValid)
+            {
+                string body = "<p>Hi " + model.Name + "</p></br>";
+                body += "<pre>" + model.Message + "</pre>";
+                WebMail.Send(model.Email, model.Subject, body, null, null, null, true, null, null, null, null, null, null);
+                TempData["Success"] = "Email sent successfully.";
+                return RedirectToAction("Index");
+            }
+            TempData["Error"] = "Error occured while sending Email.";
+            return RedirectToAction("Index");
         }
 
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
-        }
     }
 }
